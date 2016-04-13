@@ -31,4 +31,5 @@ tasks.copyTask.execute()
 dependencies {
     compile files('libs/OoyalaSDK.jar')
     compile 'com.google.android.gms:play-services-ads:+'
+    compile 'com.google.android.exoplayer:exoplayer:r1.5.5'
 }

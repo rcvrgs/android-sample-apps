@@ -40,7 +40,8 @@ public class BasicPlaybackListActivity extends Activity implements OnItemClickLi
     selectionMap = new LinkedHashMap<String, PlayerSelectionOption>();
     //Populate the embed map
     selectionMap.put("4:3 Aspect Ratio", new PlayerSelectionOption("FwaXZjcjrkydIftLal2cq9ymQMuvjvD8", OoyalaSkinPlayerActivity.class));
-    selectionMap.put("Widevine DASH", new PlayerSelectionOption("l2NG1mMjE6wnaRDBjPqbLbnZsxYvNHLI", OoyalaSkinPlayerActivity.class));
+    selectionMap.put("SC WV", new PlayerSelectionOption("d3MjBtMjE6Su-huPJLry4msBww0ixJde", OoyalaSkinPlayerActivity.class));
+//asset was deleted    selectionMap.put("Widevine DASH", new PlayerSelectionOption("l2NG1mMjE6wnaRDBjPqbLbnZsxYvNHLI", OoyalaSkinPlayerActivity.class));
     selectionMap.put( "MP4 Video", new PlayerSelectionOption("h4aHB1ZDqV7hbmLEv4xSOx3FdUUuephx", OoyalaSkinPlayerActivity.class) );
     selectionMap.put( "HLS Video", new PlayerSelectionOption("Y1ZHB1ZDqfhCPjYYRbCEOz0GR8IsVRm1", OoyalaSkinPlayerActivity.class) );
     selectionMap.put( "Ooyala Encrypted HLS", new PlayerSelectionOption("ZtZmtmbjpLGohvF5zBLvDyWexJ70KsL-", OoyalaSkinPlayerActivity.class) );

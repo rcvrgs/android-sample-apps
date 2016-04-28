@@ -45,6 +45,7 @@ public class BasicPlaybackListActivity extends Activity implements OnItemClickLi
     selectionMap.put( "HLS Video", new PlayerSelectionOption("Y1ZHB1ZDqfhCPjYYRbCEOz0GR8IsVRm1", OoyalaSkinPlayerActivity.class) );
     selectionMap.put( "Ooyala Encrypted HLS", new PlayerSelectionOption("ZtZmtmbjpLGohvF5zBLvDyWexJ70KsL-", OoyalaSkinPlayerActivity.class) );
     selectionMap.put( "VOD with CCs", new PlayerSelectionOption("92cWp0ZDpDm4Q8rzHfVK6q9m6OtFP-ww", OoyalaSkinPlayerActivity.class) );
+    selectionMap.put( "Clear HLS No Master Playlist", new PlayerSelectionOption("ltd2c1MzE6OYoklGukrd4D7W2u_A1vWB", OoyalaSkinPlayerActivity.class) );
     selectionMap.put( "Clear HLS High Profile", new PlayerSelectionOption("FlNXNsMjE6SvZO6iFmPgfXhG_PKX1yTJ", OoyalaSkinPlayerActivity.class) );
     selectionMap.put( "Clear HLS Main Profile", new PlayerSelectionOption("42cnNsMjE62UDH0JlCssXEPhxlhj1YBN", OoyalaSkinPlayerActivity.class) );
     selectionMap.put( "Clear HLS Baseline", new PlayerSelectionOption("V5ZnNsMjE6NRd7hfQYZibvDufNgB_233", OoyalaSkinPlayerActivity.class) );

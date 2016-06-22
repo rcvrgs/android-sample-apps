@@ -5,17 +5,17 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
-import com.ooyala.android.OoyalaPlayer;
 import com.ooyala.android.OoyalaNotification;
+import com.ooyala.android.OoyalaPlayer;
 import com.ooyala.android.PlayerDomain;
 import com.ooyala.android.configuration.Options;
-import com.ooyala.sample.R;
-
+import com.ooyala.android.item.Stream;
+import com.ooyala.android.item.UnbundledVideo;
 import com.ooyala.android.skin.OoyalaSkinLayout;
 import com.ooyala.android.skin.OoyalaSkinLayoutController;
 import com.ooyala.android.skin.configuration.SkinOptions;
 import com.ooyala.android.util.SDCardLogcatOoyalaEventsLogger;
-
+import com.ooyala.sample.R;
 
 import org.json.JSONObject;
 
@@ -66,7 +66,15 @@ public class OoyalaSkinPlayerActivity extends Activity implements Observer, Defa
 
     player.addObserver(this);
 
-    if (player.setEmbedCode(EMBED)) {
+    if (EMBED.equals("UNBUNDLED")) {
+      Stream s = new Stream();
+      s.setUrlFormat(Stream.STREAM_URL_FORMAT_TEXT);
+      s.setUrl("1.mpd");
+      s.setDeliveryType(Stream.DELIVERY_TYPE_DASH);
+      UnbundledVideo uv = new UnbundledVideo(s);
+      player.setUnbundledVideo(uv);
+
+    } else if (player.setEmbedCode(EMBED)) {
       //Uncomment for autoplay
       //player.play();
     }

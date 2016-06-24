@@ -71,6 +71,7 @@ public class OoyalaSkinPlayerActivity extends Activity implements Observer, Defa
       s.setUrlFormat(Stream.STREAM_URL_FORMAT_TEXT);
       s.setUrl("1.mpd");
       s.setDeliveryType(Stream.DELIVERY_TYPE_DASH);
+      s.setOfflineStream(true);
       UnbundledVideo uv = new UnbundledVideo(s);
       player.setUnbundledVideo(uv);
 

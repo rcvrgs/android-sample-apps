@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.ooyala.sample.R;
+import com.ooyala.sample.players.OoyalaSkinOPTPlayerActivity;
 import com.ooyala.sample.players.OoyalaSkinPlayerActivity;
 import com.ooyala.sample.utils.PlayerSelectionOption;
 
@@ -40,7 +41,8 @@ public class BasicPlaybackListActivity extends Activity implements OnItemClickLi
     selectionMap = new LinkedHashMap<String, PlayerSelectionOption>();
     //Populate the embed map
     selectionMap.put("4:3 Aspect Ratio", new PlayerSelectionOption("FwaXZjcjrkydIftLal2cq9ymQMuvjvD8", OoyalaSkinPlayerActivity.class));
-    selectionMap.put("Widevine DASH", new PlayerSelectionOption("BuY3RsMzE61s6nTC5ct6R-DOapuPt5f7", OoyalaSkinPlayerActivity.class));
+    selectionMap.put("Widevine DASH", new PlayerSelectionOption("ViMjZiNDE6VV9HACqBX2i6T1qfjCclFI", OoyalaSkinPlayerActivity.class));
+    selectionMap.put("OPT Widevine", new PlayerSelectionOption("ViMjZiNDE6VV9HACqBX2i6T1qfjCclFI", OoyalaSkinOPTPlayerActivity.class));
     selectionMap.put("Offline DASH", new PlayerSelectionOption("UNBUNDLED", OoyalaSkinPlayerActivity.class));
     selectionMap.put( "MP4 Video", new PlayerSelectionOption("h4aHB1ZDqV7hbmLEv4xSOx3FdUUuephx", OoyalaSkinPlayerActivity.class) );
     selectionMap.put( "HLS Video", new PlayerSelectionOption("Y1ZHB1ZDqfhCPjYYRbCEOz0GR8IsVRm1", OoyalaSkinPlayerActivity.class) );

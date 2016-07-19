@@ -1,5 +1,6 @@
 package com.ooyala.sample.players;
 
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import com.ooyala.android.OoyalaNotification;
 import com.ooyala.android.OoyalaPlayer;
 import com.ooyala.android.PlayerDomain;
 import com.ooyala.android.configuration.Options;
+import com.ooyala.android.item.OfflineVideo;
 import com.ooyala.android.skin.OoyalaSkinLayout;
 import com.ooyala.android.skin.OoyalaSkinLayoutController;
 import com.ooyala.android.skin.configuration.SkinOptions;
@@ -17,16 +19,11 @@ import com.ooyala.sample.R;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
-/**
- * This activity illustrates how you can play basic playback video using the Skin SDK
- * you can also play Ooyala and VAST advertisements programmatically
- * through the SDK
- *
- */
-public class OoyalaSkinPlayerActivity extends Activity implements Observer, DefaultHardwareBackBtnHandler {
+public class OfflineSkinPlayerActivity extends Activity implements Observer, DefaultHardwareBackBtnHandler {
   final String TAG = this.getClass().toString();
 
   String EMBED = null;
@@ -63,8 +60,10 @@ public class OoyalaSkinPlayerActivity extends Activity implements Observer, Defa
     playerLayoutController = new OoyalaSkinLayoutController(getApplication(), skinLayout, player, skinOptions);
 
     player.addObserver(this);
+    File folder = new File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_MOVIES), EMBED);
+    OfflineVideo ov = OfflineVideo.createDashVideo(folder);
 
-    if (player.setEmbedCode(EMBED)) {
+    if (player.setUnbundledVideo(ov)) {
       //Uncomment for autoplay
       //player.play();
     }
@@ -186,5 +185,4 @@ public class OoyalaSkinPlayerActivity extends Activity implements Observer, Defa
 
     Log.d(TAG, "Notification Received: " + arg1 + " - state: " + player.getState());
   }
-
 }

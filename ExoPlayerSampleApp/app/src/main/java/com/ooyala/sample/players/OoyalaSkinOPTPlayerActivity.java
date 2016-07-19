@@ -12,8 +12,6 @@ import com.ooyala.android.OoyalaNotification;
 import com.ooyala.android.OoyalaPlayer;
 import com.ooyala.android.PlayerDomain;
 import com.ooyala.android.configuration.Options;
-import com.ooyala.android.item.Stream;
-import com.ooyala.android.item.UnbundledVideo;
 import com.ooyala.android.skin.OoyalaSkinLayout;
 import com.ooyala.android.skin.OoyalaSkinLayoutController;
 import com.ooyala.android.skin.configuration.SkinOptions;
@@ -72,17 +70,7 @@ public class OoyalaSkinOPTPlayerActivity extends Activity
     playerLayoutController = new OoyalaSkinLayoutController(getApplication(), skinLayout, player, skinOptions);
 
     player.addObserver(this);
-
-    if (EMBED.equals("UNBUNDLED")) {
-      Stream s = new Stream();
-      s.setUrlFormat(Stream.STREAM_URL_FORMAT_TEXT);
-      s.setUrl("1.mpd");
-      s.setDeliveryType(Stream.DELIVERY_TYPE_DASH);
-      s.setOfflineStream(true);
-      UnbundledVideo uv = new UnbundledVideo(s);
-      player.setUnbundledVideo(uv);
-
-    } else if (player.setEmbedCode(EMBED)) {
+    if (player.setEmbedCode(EMBED)) {
       //Uncomment for autoplay
       //player.play();
     }

@@ -4,16 +4,20 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
-import com.ooyala.android.player.exoplayer.OfflineDashDownloader;
-import com.ooyala.android.player.exoplayer.OfflineDashOptions;
+import com.ooyala.android.offline.DashDownloader;
+import com.ooyala.android.offline.DashOptions;
+import com.ooyala.android.util.DebugMode;
 import com.ooyala.android.util.SDCardLogcatOoyalaEventsLogger;
 import com.ooyala.sample.R;
 
 import java.io.File;
+import java.io.IOException;
 
-public class OfflineDownloadActivity extends Activity implements OfflineDashDownloader.Listener {
+public class OfflineDownloadActivity extends Activity implements DashDownloader.Listener {
   final String TAG = this.getClass().toString();
 
   String EMBED = null;
@@ -41,11 +45,41 @@ public class OfflineDownloadActivity extends Activity implements OfflineDashDown
 
     String widevineUrl = "http://player.ooyala.com/sas/drm2/FoeG863GnBL4IhhlFC1Q2jqbkH9m/BuY3RsMzE61s6nTC5ct6R-DOapuPt5f7/widevine_modular/ooyala";
     String mpdFile = "http://secure-cf-c.ooyala.com/BuY3RsMzE61s6nTC5ct6R-DOapuPt5f7/1/dash/1.mpd";
-    File folder = new File(android.os.Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), EMBED);
+    final File folder = new File(android.os.Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), EMBED);
 
-    OfflineDashOptions options = new OfflineDashOptions.Builder(mpdFile, folder).setLicenseServerurl(widevineUrl).build();
-    OfflineDashDownloader downloader = new OfflineDashDownloader(this, options, this);
-    downloader.startDownload();
+    DashOptions options = new DashOptions.Builder(mpdFile, folder).setLicenseServerurl(widevineUrl).build();
+    final DashDownloader downloader = new DashDownloader(this, options, this);
+
+    Button startButton = (Button)findViewById(R.id.start_button);
+    startButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        downloader.startDownload();
+      }
+    });
+
+    Button cancelButton = (Button)findViewById(R.id.cancel_button);
+    cancelButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        downloader.abort();
+      }
+    });
+
+    Button resetButton = (Button)findViewById(R.id.reset_button);
+    resetButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        try {
+          DashDownloader.deleteAll(folder);
+        } catch (IOException ex) {
+          DebugMode.logE("OfflineDownloader", "failed to reset folder:" + folder.toString(), ex);
+          return;
+        }
+
+        progressView.setText("cleared!");
+      }
+    });
   }
 
   public void onCompletion() {
@@ -57,11 +91,20 @@ public class OfflineDownloadActivity extends Activity implements OfflineDashDown
     });
   }
 
-  public void onAbort(final Exception ex) {
+  public void onAbort() {
     handler.post(new Runnable() {
       @Override
       public void run() {
-        progressView.setText("Aborted:" + ex.getLocalizedMessage());
+        progressView.setText("Aborted");
+      }
+    });
+  }
+
+  public void onError(final Exception ex) {
+    handler.post(new Runnable() {
+      @Override
+      public void run() {
+        progressView.setText("Error:" + ex.getLocalizedMessage());
       }
     });
   }

@@ -10,12 +10,10 @@ import android.widget.TextView;
 
 import com.ooyala.android.offline.DashDownloader;
 import com.ooyala.android.offline.DashOptions;
-import com.ooyala.android.util.DebugMode;
 import com.ooyala.android.util.SDCardLogcatOoyalaEventsLogger;
 import com.ooyala.sample.R;
 
 import java.io.File;
-import java.io.IOException;
 
 public class OfflineDownloadActivity extends Activity implements DashDownloader.Listener {
   final String TAG = this.getClass().toString();
@@ -70,14 +68,11 @@ public class OfflineDownloadActivity extends Activity implements DashDownloader.
     resetButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        try {
-          DashDownloader.deleteAll(folder);
-        } catch (IOException ex) {
-          DebugMode.logE("OfflineDownloader", "failed to reset folder:" + folder.toString(), ex);
-          return;
+        if (downloader.deleteAll()) {
+          progressView.setText("deletion completed");
+        } else {
+          progressView.setText("deletion failed");
         }
-
-        progressView.setText("cleared!");
       }
     });
   }
@@ -116,6 +111,16 @@ public class OfflineDownloadActivity extends Activity implements DashDownloader.
       @Override
       public void run() {
         progressView.setText(progress);
+      }
+    });
+  }
+
+  private void onDeletion(final boolean success) {
+    handler.post(new Runnable() {
+      @Override
+      public void run() {
+        progressView.setText(success ? " deletion completed" : "deletion failed");
+
       }
     });
   }

@@ -41,11 +41,9 @@ public class OfflineDownloadActivity extends Activity implements DashDownloader.
     progressView.setText("progress: 0");
     handler = new Handler(getMainLooper());
 
-    String widevineUrl = "http://player.ooyala.com/sas/drm2/FoeG863GnBL4IhhlFC1Q2jqbkH9m/BuY3RsMzE61s6nTC5ct6R-DOapuPt5f7/widevine_modular/ooyala";
-    String mpdFile = "http://secure-cf-c.ooyala.com/BuY3RsMzE61s6nTC5ct6R-DOapuPt5f7/1/dash/1.mpd";
-    final File folder = new File(android.os.Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), EMBED);
+    final File folder = android.os.Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
 
-    DashOptions options = new DashOptions.Builder(mpdFile, folder).setLicenseServerurl(widevineUrl).build();
+    DashOptions options = new DashOptions.Builder(PCODE, EMBED, DOMAIN, folder).build();
     final DashDownloader downloader = new DashDownloader(this, options, this);
 
     Button startButton = (Button)findViewById(R.id.start_button);

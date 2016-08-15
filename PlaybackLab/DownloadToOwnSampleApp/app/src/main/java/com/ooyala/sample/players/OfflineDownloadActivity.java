@@ -81,7 +81,14 @@ public class OfflineDownloadActivity extends Activity implements DashDownloader.
       @Override
       public void run() {
         long expiration = downloader.getLicenseExpirationDate();
-        String expirationString = expiration == DashDownloader.INFINITE_DURATION ? "infinite" : String.valueOf(expiration);
+        String expirationString = "";
+        if (expiration == DashDownloader.INFINITE_DURATION) {
+          expirationString = "infiite";
+        } else {
+          SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+          expirationString = dateFormat.format(expiration * 1000);
+        }
+
         progressView.setText("Completed! license expires in " + expirationString);
       }
     });

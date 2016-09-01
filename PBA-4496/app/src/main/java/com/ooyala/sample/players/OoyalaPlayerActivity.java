@@ -21,6 +21,9 @@ import com.ooyala.android.PlayerDomain;
 import com.ooyala.android.configuration.Options;
 import com.ooyala.android.item.Video;
 import com.ooyala.android.pulseintegration.OoyalaPulseManager;
+import com.ooyala.android.skin.OoyalaSkinLayout;
+import com.ooyala.android.skin.OoyalaSkinLayoutController;
+import com.ooyala.android.skin.configuration.SkinOptions;
 import com.ooyala.android.ui.OoyalaPlayerLayoutController;
 import com.ooyala.android.util.SDCardLogcatOoyalaEventsLogger;
 import com.ooyala.pulse.Pulse;
@@ -56,7 +59,7 @@ public class OoyalaPlayerActivity extends Activity implements Observer, EmbedTok
   // Write the sdk events text along with events count to log file in sdcard if the log file already exists
   SDCardLogcatOoyalaEventsLogger Playbacklog = new SDCardLogcatOoyalaEventsLogger();
 
-  protected OoyalaPlayerLayoutController playerLayoutController;
+  protected OoyalaSkinLayoutController playerLayoutController;
   protected OoyalaPlayer player;
   /**
    * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -70,19 +73,24 @@ public class OoyalaPlayerActivity extends Activity implements Observer, EmbedTok
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setTitle(getIntent().getExtras().getString("selection_name"));
-    setContentView(R.layout.player_simple_layout2);
+    setContentView(R.layout.player_simple_frame_layout);
+
     EMBED = getIntent().getExtras().getString("embed_code");
 
+    /** DITA_START:<ph id="freewheel_preconfigured"> **/
     //Initialize the player
-    OoyalaPlayerLayout playerLayout = (OoyalaPlayerLayout) findViewById(R.id.ooyalaPlayer);
+
+    // Get the SkinLayout from our layout xml
+    OoyalaSkinLayout skinLayout = (OoyalaSkinLayout)findViewById(R.id.ooyalaPlayer);
 
     // Create the OoyalaPlayer, with some built-in UI disabled
     PlayerDomain domain = new PlayerDomain(DOMAIN);
-    Options options = new Options.Builder().setShowPromoImage(false).setShowNativeLearnMoreButton(false).setUseExoPlayer(true).build();
-    player = new OoyalaPlayer(PCODE, domain, this, options);
+    Options options = new Options.Builder().setShowPromoImage(false).setUseExoPlayer(true).setShowNativeLearnMoreButton(false).build();
+    player = new OoyalaPlayer(PCODE, domain, options);
 
-    playerLayoutController = new OoyalaPlayerLayoutController(playerLayout, player);
+    //Create the SkinOptions, and setup React
+    SkinOptions skinOptions = new SkinOptions.Builder().build();
+    playerLayoutController = new OoyalaSkinLayoutController(getApplication(), skinLayout, player, skinOptions);
 
     player.addObserver(this);
 
@@ -134,19 +142,21 @@ public class OoyalaPlayerActivity extends Activity implements Observer, EmbedTok
     }
   }
 
-  /**
-   * Start DefaultHardwareBackBtnHandler
-   **/
+  /** Start DefaultHardwareBackBtnHandler **/
   @Override
   public void invokeDefaultOnBackPressed() {
     super.onBackPressed();
   }
   /** End DefaultHardwareBackBtnHandler **/
 
+  /** Start Activity methods for Skin **/
   @Override
   protected void onPause() {
     super.onPause();
-    Log.d(TAG, "Player Activity Stopped");
+    if (playerLayoutController != null) {
+      playerLayoutController.onPause();
+    }
+
     if (player != null) {
       player.suspend();
     }
@@ -155,7 +165,10 @@ public class OoyalaPlayerActivity extends Activity implements Observer, EmbedTok
   @Override
   protected void onResume() {
     super.onResume();
-    Log.d(TAG, "Player Activity Restarted");
+    if (playerLayoutController != null) {
+      playerLayoutController.onResume( this, this);
+    }
+
     if (player != null) {
       player.resume();
     }
@@ -163,28 +176,21 @@ public class OoyalaPlayerActivity extends Activity implements Observer, EmbedTok
 
   @Override
   public void onBackPressed() {
+    if (playerLayoutController != null) {
+      playerLayoutController.onBackPressed();
+    } else {
       super.onBackPressed();
+    }
   }
-
   @Override
   protected void onDestroy() {
     super.onDestroy();
+    if (playerLayoutController != null) {
+      playerLayoutController.onDestroy();
+    }
   }
+  /** End Activity methods for Skin **/
 
-  @Override
-  protected void onStop() {
-    super.onStop();
-
-    // ATTENTION: This was auto-generated to implement the App Indexing API.
-    // See https://g.co/AppIndexing/AndroidStudio for more information.
-    client.disconnect();
-  }
-
-  @Override
-  protected void onRestart() {
-    super.onRestart();
-
-  }
 
   /**
    * Listen to all notifications from the OoyalaPlayer

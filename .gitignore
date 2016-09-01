@@ -27,7 +27,6 @@ go_script/pkg
 **/libvo*.so
 
 **/app/libs/*.jar
-**/app/libs/*.aar
 **/app/src/main/assets/index.android.jsbundle
 **/app/src/main/assets/fonts/*
 **/app/src/main/assets/skin-config/*

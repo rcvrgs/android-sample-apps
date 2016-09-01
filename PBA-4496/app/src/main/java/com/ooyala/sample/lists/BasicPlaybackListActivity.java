@@ -41,7 +41,7 @@ public class BasicPlaybackListActivity extends Activity implements OnItemClickLi
     //Populate the embed map
 
     selectionMap.put("MPEG-DASH CENC (Widevine Modular) - Asset 1 - oyZmx*", new PlayerSelectionOption("oyZmxzNDE6JVWDYAilK6Pk2elOlEE4KQ", OoyalaPlayerActivity.class));
-    selectionMap.put("MPEG-DASH CENC (Widevine Modular) - Asset 2 - V20Tz*", new PlayerSelectionOption("V2OTZzNDE6oyIAmTRhw8O5rjz-N8GF4I", OoyalaPlayerActivity.class));
+    selectionMap.put("Pulse Asset", new PlayerSelectionOption("Z1cDhhMTE6qLv4OvkymS18WOBhqUQO53", OoyalaPlayerActivity.class));
     selectionMap.put("MPEG-DASH CENC (Widevine Modular) - Test Asset - no token - Y0YzV*", new PlayerSelectionOption("Y0YzV2NDE6Tb6kyK5zaKAKG8_JLpcBwz", OoyalaPlayerActivity.class));
 
     setContentView(R.layout.list_activity_layout);

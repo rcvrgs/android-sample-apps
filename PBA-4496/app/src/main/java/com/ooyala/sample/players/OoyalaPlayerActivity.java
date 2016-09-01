@@ -1,6 +1,7 @@
 package com.ooyala.sample.players;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,8 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.ooyala.adtech.ContentMetadata;
+import com.ooyala.adtech.RequestSettings;
 import com.ooyala.android.EmbedTokenGenerator;
 import com.ooyala.android.EmbedTokenGeneratorCallback;
 import com.ooyala.android.OoyalaNotification;
@@ -16,13 +19,20 @@ import com.ooyala.android.OoyalaPlayer;
 import com.ooyala.android.OoyalaPlayerLayout;
 import com.ooyala.android.PlayerDomain;
 import com.ooyala.android.configuration.Options;
+import com.ooyala.android.item.Video;
+import com.ooyala.android.pulseintegration.OoyalaPulseManager;
 import com.ooyala.android.ui.OoyalaPlayerLayoutController;
 import com.ooyala.android.util.SDCardLogcatOoyalaEventsLogger;
+import com.ooyala.pulse.Pulse;
+import com.ooyala.pulse.PulseSession;
+import com.ooyala.pulse.PulseVideoAd;
 import com.ooyala.sample.R;
 import com.ooyala.sample.utils.EmbeddedSecureURLGenerator;
 
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
@@ -32,7 +42,7 @@ public class OoyalaPlayerActivity extends Activity implements Observer, EmbedTok
   final String TAG = this.getClass().toString();
 
   String EMBED = null;
-  final String PCODE = "1vMWMyOnXj8xkltLP317AyOWK1T2";
+  final String PCODE = "tlM2k6i2-WrXX1DE_b8zfhui_eQN";
   private final String ACCOUNT_ID = "accountID";
   final String DOMAIN = "http://ooyala.com";
 
@@ -76,15 +86,52 @@ public class OoyalaPlayerActivity extends Activity implements Observer, EmbedTok
 
     player.addObserver(this);
 
+    // ATTENTION: This was auto-generated to implement the App Indexing API.
+    // See https://g.co/AppIndexing/AndroidStudio for more information.
+    client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+    //Create an instance of OoyalaPulseManager and set a listener.
+    final OoyalaPulseManager pulseManager = new OoyalaPulseManager(player);
+    pulseManager.setListener(new OoyalaPulseManager.Listener() {
+      /*
+        Called by the plugin to let us create the Pulse session; the metadata retrieved from Backlot is provided here
+      */
+      @Override
+      public PulseSession createPulseSession(OoyalaPulseManager ooyalaPulseManager, Video video, String pulseHost, ContentMetadata contentMetadata, RequestSettings requestSettings) {
+        // Replace some of the Backlot metadata with our own local data
+        List<Float> midrollPositions = new ArrayList<>();
+        midrollPositions.add(15f);
+        midrollPositions.add(30f);
+        requestSettings.setLinearPlaybackPositions(midrollPositions);
+        List<String> tags = new ArrayList<String>();
+        tags.add("standard-midrolls");
+        contentMetadata.setTags(tags);
+        contentMetadata.setIdentifier("demo-midroll");
+        contentMetadata.setCategory("");
+        Pulse.setPulseHost(pulseHost, null, null);
+        return Pulse.createSession(contentMetadata, requestSettings);
+      }
+
+      @Override
+      public void openClickThrough(OoyalaPulseManager ooyalaPulseManager, PulseVideoAd pulseVideoAd) {
+        Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(pulseVideoAd.getClickthroughURL().toString()));
+        startActivity(intent);
+
+        // adClickThroughTriggered should be reported when the user has opened the
+        // clickthrough link in a browser.
+        // Note: If there are multiple browsers installed on device, the user will
+        // be asked choose a browser or cancel. An accurate implementation should
+        // only call adClickThroughTriggered if the browser was actually opened.
+        pulseVideoAd.adClickThroughTriggered();
+      }
+    });
+
     if (player.setEmbedCode(EMBED)) {
       //Uncomment for autoplay
       //player.play();
     } else {
       Log.e(TAG, "Asset Failure");
     }
-    // ATTENTION: This was auto-generated to implement the App Indexing API.
-    // See https://g.co/AppIndexing/AndroidStudio for more information.
-    client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
   }
 
   /**

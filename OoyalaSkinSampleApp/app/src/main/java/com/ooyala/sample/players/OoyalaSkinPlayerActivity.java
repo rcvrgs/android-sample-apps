@@ -10,7 +10,10 @@ import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.ooyala.android.OoyalaPlayer;
 import com.ooyala.android.OoyalaNotification;
 import com.ooyala.android.PlayerDomain;
+import com.ooyala.android.StreamSelector;
 import com.ooyala.android.configuration.Options;
+import com.ooyala.android.item.Stream;
+import com.ooyala.android.player.exoplayer.ExoPlayerFactory;
 import com.ooyala.sample.R;
 
 import com.ooyala.android.skin.OoyalaSkinLayout;
@@ -21,8 +24,11 @@ import com.ooyala.android.util.SDCardLogcatOoyalaEventsLogger;
 
 import org.json.JSONObject;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 /**
  * This activity illustrates how you can play basic playback video using the Skin SDK
@@ -44,6 +50,52 @@ public class OoyalaSkinPlayerActivity extends Activity implements Observer, Defa
   protected OoyalaPlayer player;
   private OoyalaSkinLayout skinLayout;
 
+
+  private static class NewStreamSelector implements StreamSelector {
+    public NewStreamSelector() {
+    }
+
+    public Stream bestStream(Set<Stream> streams, boolean isWifiEnabled) {
+      if(streams != null && streams.size() != 0) {
+        Stream bestBitrateStream = null;
+        Iterator var4 = streams.iterator();
+
+        while(var4.hasNext()) {
+          Stream stream = (Stream)var4.next();
+          if(stream.getDeliveryType().equals("remote_asset") || stream.getDeliveryType().equals("hls") || stream.getDeliveryType().equals("dash")  || stream.getDeliveryType().equals("akamai_hd2_hls")) {
+            return stream;
+          }
+
+          if(Stream.isDeliveryTypePlayable(stream) && Stream.isProfilePlayable(stream) /*&& (bestBitrateStream == null || stream.betterThan(bestBitrateStream, isWifiEnabled))*/) {
+            bestBitrateStream = stream;
+          }
+        }
+
+        return bestBitrateStream;
+      } else {
+        return null;
+      }
+    }
+  }
+
+
+  // Use this to force ExoPlayer to playback the Akamai HLS
+  private  static class AkamaiExoPlayerFactory extends ExoPlayerFactory {
+
+    private Set<String> supportedFormats;
+    public AkamaiExoPlayerFactory(int priority) {
+      super(priority);
+      this.supportedFormats = new HashSet<String>();
+      supportedFormats.add(Stream.DELIVERY_TYPE_DASH);
+      supportedFormats.add(Stream.DELIVERY_TYPE_HLS);
+      supportedFormats.add(Stream.DELIVERY_TYPE_M3U8);
+      supportedFormats.add(Stream.DELIVERY_TYPE_MP4);
+      supportedFormats.add("akamai_hd2_hls");
+    }
+    public Set<String> getSupportedFormats() {
+      return this.supportedFormats;
+    }
+  }
   /**
    * Called when the activity is first created.
    */
@@ -62,9 +114,12 @@ public class OoyalaSkinPlayerActivity extends Activity implements Observer, Defa
 
     // Create the OoyalaPlayer, with some built-in UI disabled
     PlayerDomain domain = new PlayerDomain(DOMAIN);
-    Options options = new Options.Builder().setShowNativeLearnMoreButton(false).setShowPromoImage(false).build();
+    Stream.setStreamSelector(new NewStreamSelector());
+    Options options = new Options.Builder().setShowNativeLearnMoreButton(false).setShowPromoImage(false).setUseExoPlayer(true).build();
     player = new OoyalaPlayer(PCODE, domain, options);
 
+//  // Use this to force ExoPlayer to playback the Akamai HLS
+//    player.getMoviePlayerSelector().registerPlayerFactory(new AkamaiExoPlayerFactory(125));
     //Create the SkinOptions, and setup React
     JSONObject overrides = createSkinOverrides();
     SkinOptions skinOptions = new SkinOptions.Builder().setSkinOverrides(overrides).build();

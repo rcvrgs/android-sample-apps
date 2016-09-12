@@ -38,7 +38,7 @@ public class OoyalaSkinListActivity extends Activity implements OnItemClickListe
     setTitle(getName());
 
     selectionMap = new LinkedHashMap<String, PlayerSelectionOption>();
-    selectionMap.put("4:3 Aspect Ratio", new PlayerSelectionOption("FwaXZjcjrkydIftLal2cq9ymQMuvjvD8", "c0cTkxOqALQviQIGAHWY5hP0q9gU", "http://www.ooyala.com", OoyalaSkinPlayerActivity.class));
+    selectionMap.put("BZ", new PlayerSelectionOption("RndmVvNTE6Tfr8lEmHCCxo5fcpnKl5QD", "NmajUyOszCz8DijUcbnm8BB9sL8A", "http://www.ooyala.com", OoyalaSkinPlayerActivity.class));
     selectionMap.put( "MP4 Video", new PlayerSelectionOption("h4aHB1ZDqV7hbmLEv4xSOx3FdUUuephx", "c0cTkxOqALQviQIGAHWY5hP0q9gU", "http://www.ooyala.com", OoyalaSkinPlayerActivity.class) );
     selectionMap.put( "HLS Video", new PlayerSelectionOption("Y1ZHB1ZDqfhCPjYYRbCEOz0GR8IsVRm1", "c0cTkxOqALQviQIGAHWY5hP0q9gU", "http://www.ooyala.com", OoyalaSkinPlayerActivity.class) );
     selectionMap.put( "Ooyala Encrypted HLS", new PlayerSelectionOption("ZtZmtmbjpLGohvF5zBLvDyWexJ70KsL-", "c0cTkxOqALQviQIGAHWY5hP0q9gU", "http://www.ooyala.com", OoyalaSkinPlayerActivity.class) );

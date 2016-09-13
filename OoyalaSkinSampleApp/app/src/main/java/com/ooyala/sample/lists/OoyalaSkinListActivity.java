@@ -39,7 +39,7 @@ public class OoyalaSkinListActivity extends Activity implements OnItemClickListe
 
     selectionMap = new LinkedHashMap<String, PlayerSelectionOption>();
     selectionMap.put("BZ", new PlayerSelectionOption("RndmVvNTE6Tfr8lEmHCCxo5fcpnKl5QD", "NmajUyOszCz8DijUcbnm8BB9sL8A", "http://www.ooyala.com", OoyalaSkinPlayerActivity.class));
-    selectionMap.put( "MP4 Video", new PlayerSelectionOption("h4aHB1ZDqV7hbmLEv4xSOx3FdUUuephx", "c0cTkxOqALQviQIGAHWY5hP0q9gU", "http://www.ooyala.com", OoyalaSkinPlayerActivity.class) );
+    selectionMap.put( "BZ URL Based Token", new PlayerSelectionOption("FyNWZvNTE66pM0y1oEMVrGv0KJUC8gcy", "NmajUyOszCz8DijUcbnm8BB9sL8A", "http://www.ooyala.com", OoyalaSkinPlayerActivity.class) );
     selectionMap.put( "HLS Video", new PlayerSelectionOption("Y1ZHB1ZDqfhCPjYYRbCEOz0GR8IsVRm1", "c0cTkxOqALQviQIGAHWY5hP0q9gU", "http://www.ooyala.com", OoyalaSkinPlayerActivity.class) );
     selectionMap.put( "Ooyala Encrypted HLS", new PlayerSelectionOption("ZtZmtmbjpLGohvF5zBLvDyWexJ70KsL-", "c0cTkxOqALQviQIGAHWY5hP0q9gU", "http://www.ooyala.com", OoyalaSkinPlayerActivity.class) );
     selectionMap.put( "VOD with CCs", new PlayerSelectionOption("92cWp0ZDpDm4Q8rzHfVK6q9m6OtFP-ww", "c0cTkxOqALQviQIGAHWY5hP0q9gU", "http://www.ooyala.com", OoyalaSkinPlayerActivity.class) );

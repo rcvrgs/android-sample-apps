@@ -7,6 +7,9 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
+import com.ooyala.android.EmbedTokenGenerator;
+import com.ooyala.android.EmbedTokenGeneratorCallback;
+import com.ooyala.android.EmbeddedSecureURLGenerator;
 import com.ooyala.android.OoyalaPlayer;
 import com.ooyala.android.OoyalaNotification;
 import com.ooyala.android.PlayerDomain;
@@ -24,8 +27,11 @@ import com.ooyala.android.util.SDCardLogcatOoyalaEventsLogger;
 
 import org.json.JSONObject;
 
+import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -36,13 +42,21 @@ import java.util.Set;
  * through the SDK
  *
  */
-public class OoyalaSkinPlayerActivity extends Activity implements Observer, DefaultHardwareBackBtnHandler {
+public class OoyalaSkinPlayerActivity extends Activity implements Observer, DefaultHardwareBackBtnHandler, EmbedTokenGenerator {
   final String TAG = this.getClass().toString();
 
   String EMBED = null;
   String PCODE = null;
   String DOMAIN = null;
 
+  private final String ACCOUNT_ID = "accountID";
+
+  /*
+   * The API Key and Secret should not be saved inside your applciation (even in git!).
+   * However, for debugging you can use them to locally generate Ooyala Player Tokens.
+   */
+  private final String APIKEY = "<FILL IN>";
+  private final String SECRET = "<FILL IN>";
   // Write the sdk events text along with events count to log file in sdcard if the log file already exists
   SDCardLogcatOoyalaEventsLogger Playbacklog= new SDCardLogcatOoyalaEventsLogger();
 
@@ -62,7 +76,11 @@ public class OoyalaSkinPlayerActivity extends Activity implements Observer, Defa
 
         while(var4.hasNext()) {
           Stream stream = (Stream)var4.next();
-          if(stream.getDeliveryType().equals("remote_asset") || stream.getDeliveryType().equals("hls") || stream.getDeliveryType().equals("dash")  || stream.getDeliveryType().equals("akamai_hd2_hls")) {
+          if (stream.getDeliveryType().equals("akamai_hd2_hls")) {
+            stream.setDeliveryType("hls");
+            return stream;
+          }
+          if(stream.getDeliveryType().equals("remote_asset") || stream.getDeliveryType().equals("hls") || stream.getDeliveryType().equals("dash")) {
             return stream;
           }
 
@@ -116,10 +134,10 @@ public class OoyalaSkinPlayerActivity extends Activity implements Observer, Defa
     PlayerDomain domain = new PlayerDomain(DOMAIN);
     Stream.setStreamSelector(new NewStreamSelector());
     Options options = new Options.Builder().setShowNativeLearnMoreButton(false).setShowPromoImage(false).setUseExoPlayer(true).build();
-    player = new OoyalaPlayer(PCODE, domain, options);
+    player = new OoyalaPlayer(PCODE, domain, this, options);
 
 //  // Use this to force ExoPlayer to playback the Akamai HLS
-//    player.getMoviePlayerSelector().registerPlayerFactory(new AkamaiExoPlayerFactory(125));
+    player.getMoviePlayerSelector().registerPlayerFactory(new AkamaiExoPlayerFactory(125));
     //Create the SkinOptions, and setup React
     JSONObject overrides = createSkinOverrides();
     SkinOptions skinOptions = new SkinOptions.Builder().setSkinOverrides(overrides).build();
@@ -255,5 +273,34 @@ public class OoyalaSkinPlayerActivity extends Activity implements Observer, Defa
 
     Log.d(TAG, "Notification Received: " + arg1 + " - state: " + player.getState());
   }
+  /*
+   * Get the Ooyala Player Token to play the embed code.
+   * This should contact your servers to generate the OPT server-side.
+   * For debugging, you can use Ooyala's EmbeddedSecureURLGenerator to create local embed tokens
+   */
+  @Override
+  public void getTokenForEmbedCodes(List<String> embedCodes,
+                                    EmbedTokenGeneratorCallback callback) {
+    String embedCodesString = "";
+    for (String ec : embedCodes) {
+      if(ec.equals("")) embedCodesString += ",";
+      embedCodesString += ec;
+    }
 
+    HashMap<String, String> params = new HashMap<String, String>();
+    params.put("account_id", ACCOUNT_ID);
+
+    // Uncommenting this will bypass all syndication rules on your asset
+    // This will not work unless you have a working API Key and Secret.
+    // This is one reason why you shouldn't keep the Secret in your app/source control
+    // params.put("override_syndication_group", "override_all_synd_groups");
+
+    String uri = "/sas/embed_token/" + PCODE + "/" + embedCodesString;
+
+    EmbeddedSecureURLGenerator urlGen = new EmbeddedSecureURLGenerator(APIKEY, SECRET);
+
+    URL tokenUrl  = urlGen.secureURL("http://player.ooyala.com", uri, params);
+
+    callback.setEmbedToken(tokenUrl.toString());
+  }
 }
